@@ -2,14 +2,14 @@ package lru_test
 
 import (
 	"github.com/qianxi0410/naive-lru/lru"
+	"reflect"
 	"testing"
-	"unsafe"
 )
 
 type Value string
 
 func (v Value) Len() int {
-	return int(unsafe.Sizeof(v))
+	return len(v)
 }
 
 func TestLruGet(t *testing.T) {
@@ -27,17 +27,34 @@ func TestLruGet(t *testing.T) {
 }
 
 func TestLruOverSize(t *testing.T) {
-	cache := lru.New(16, nil)
+	cache := lru.New(10, nil)
 	// remove
 	cache.Add("k1", Value("v1"))
 	cache.Add("k2", Value("v2"))
 	cache.Add("k3", Value("v3"))
 
-	if v, ok := cache.Get("k1"); ok || string(v.(Value)) == "v1" {
+	if _, ok := cache.Get("k1"); ok {
 		t.Fail()
 	}
 
 	if cache.Len() != 2 {
 		t.Fail()
+	}
+}
+
+func  TestLruOnEvicted(t *testing.T)  {
+	keys := make([]string, 0)
+	cache := lru.New(int64(10), func(k string, value lru.Value) {
+		keys = append(keys, k)
+	})
+	cache.Add("key1", Value("123456"))
+	cache.Add("k2", Value("k2"))
+	cache.Add("k3", Value("k3"))
+	cache.Add("k4", Value("k4"))
+
+	expect := []string{"key1", "k2"}
+
+	if !reflect.DeepEqual(expect, keys) {
+		t.Fatalf("Call OnEvicted failed, expect keys equals to %s", expect)
 	}
 }

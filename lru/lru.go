@@ -53,7 +53,7 @@ func (c *Cache) Get(key string) (value Value, ok bool) {
 	return
 }
 
-// Delete will delete the entry by lru
+// RemoveOldest will delete the entry by lru
 func (c *Cache) RemoveOldest() {
 	element := c.ll.Front()
 	if element != nil {

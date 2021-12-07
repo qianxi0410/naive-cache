@@ -2,7 +2,7 @@ package lru
 
 import "container/list"
 
-// `Cache` is a LRU strategy cache
+// Cache is a LRU strategy cache
 // not thread safe now
 type Cache struct {
 	// 0 represent no limit
@@ -18,7 +18,7 @@ type Cache struct {
 	OnEvicted func(key string, value Value)
 }
 
-// `entry` need to keep key
+// entry need to keep key
 // it is convient to delete in map when delete entry
 // see leetcode :D
 type entry struct {
@@ -26,12 +26,12 @@ type entry struct {
 	value Value
 }
 
-// `Value` use len func to caclue hot many bytes it takes in mem
+// Value use len func to caclue hot many bytes it takes in mem
 type Value interface {
 	Len() int
 }
 
-// `New` is a constructor of `Cache`
+// New is a constructor of `Cache`
 func New(maxBytes int64, onEvicted func(string, Value)) *Cache {
 	return &Cache{
 		maxBytes:  maxBytes,
@@ -42,7 +42,7 @@ func New(maxBytes int64, onEvicted func(string, Value)) *Cache {
 	}
 }
 
-// `Get` will look element and move this node to list end
+// Get will look element and move this node to list end
 func (c *Cache) Get(key string) (value Value, ok bool) {
 	if element, ok := c.cache[key]; ok {
 		// lru feature
@@ -53,7 +53,7 @@ func (c *Cache) Get(key string) (value Value, ok bool) {
 	return
 }
 
-// `Delete` will delete the entry by lru
+// Delete will delete the entry by lru
 func (c *Cache) RemoveOldest() {
 	element := c.ll.Front()
 	if element != nil {
@@ -68,7 +68,7 @@ func (c *Cache) RemoveOldest() {
 	}
 }
 
-// `Add` will add an new entry in cache
+// Add will add an new entry in cache
 func (c *Cache) Add(key string, value Value) {
 	if element, ok := c.cache[key]; ok {
 		// already exist
@@ -87,7 +87,7 @@ func (c *Cache) Add(key string, value Value) {
 	}
 }
 
-// `Len` reutrn the number of elements
+// Len reutrn the number of elements
 func (c *Cache) Len() int {
 	return c.ll.Len()
 }

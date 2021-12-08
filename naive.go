@@ -15,34 +15,42 @@ type Getter interface {
 type GetterFunc func(key string) ([]byte, error)
 
 // Get impl the Getter interface
-func (f GetterFunc) Get(key string) ([]byte, error)  {
+func (f GetterFunc) Get(key string) ([]byte, error) {
 	return f(key)
 }
 
 // Group is a cache namespace and associated data loaded spread over
 type Group struct {
-	name string
-	getter Getter
+	name      string
+	getter    Getter
 	mainCache cache
+	peers     PeerPicker
 }
 
 var (
-	mu sync.RWMutex
+	mu     sync.RWMutex
 	groups = make(map[string]*Group)
 )
+
+func (g *Group) RegisterPeers(peers PeerPicker) {
+	if g.peers != nil {
+		panic("RegisterPeers can not call twice")
+	}
+	g.peers = peers
+}
 
 // NewGroup create a new instance of Group
 func NewGroup(name string, getter Getter, cacheBytes int64) *Group {
 	if getter == nil {
-		 panic("getter func can not be ni")
+		panic("getter func can not be ni")
 	}
 
 	mu.Lock()
 	defer mu.Unlock()
 
 	g := &Group{
-		name:     name,
-		getter:   getter,
+		name:   name,
+		getter: getter,
 		mainCache: cache{
 			cacheBytes: cacheBytes,
 		},
@@ -54,7 +62,7 @@ func NewGroup(name string, getter Getter, cacheBytes int64) *Group {
 
 // GetGroup returns the named group previously created with NewGroup, or
 // nil if there's no such group.
-func  GetGroup(name string) *Group {
+func GetGroup(name string) *Group {
 	mu.RLock()
 	g := groups[name]
 	mu.RUnlock()
@@ -76,7 +84,25 @@ func (g *Group) Get(key string) (ByteView, error) {
 	return g.load(key)
 }
 
-func (g *Group) load(key string) (ByteView, error) {
+func (g *Group) getFromPeer(peer PeerGetter, key string) (ByteView, error) {
+	bytes, err := peer.Get(g.name, key)
+	if err != nil {
+		return ByteView{}, err
+	}
+
+	return ByteView{b: bytes}, nil
+}
+
+func (g *Group) load(key string) (value ByteView, err error) {
+	if g.peers != nil {
+		if peer, ok := g.peers.PickPeer(key); ok {
+			if value, err = g.getFromPeer(peer, key); err == nil {
+				return value, nil
+			}
+			log.Println("[naive cache] failed to get from peer", err)
+		}
+	}
+
 	return g.getLocally(key)
 }
 

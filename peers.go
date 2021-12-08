@@ -1,6 +1,6 @@
 package naive_cache
 
-import "github.com/qianxi0410/naive-lru/pb"
+import "github.com/qianxi0410/naive-cache/pb"
 
 // PeerPicker is the interface that must be implemented to locate
 // the peer that owns a specific key

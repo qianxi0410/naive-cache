@@ -1,17 +1,18 @@
 package naive_cache
 
 import (
-	"github.com/qianxi0410/naive-lru/lru"
 	"sync"
+
+	"github.com/qianxi0410/naive-cache/lru"
 )
 
 type cache struct {
-	mu sync.RWMutex
-	lru *lru.Cache
+	mu         sync.RWMutex
+	lru        *lru.Cache
 	cacheBytes int64
 }
 
-func (c *cache) add(key string, value ByteView)  {
+func (c *cache) add(key string, value ByteView) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -21,7 +22,7 @@ func (c *cache) add(key string, value ByteView)  {
 	c.lru.Add(key, value)
 }
 
-func (c *cache) get(key string) (value ByteView, ok bool)  {
+func (c *cache) get(key string) (value ByteView, ok bool) {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 

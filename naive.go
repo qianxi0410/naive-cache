@@ -5,8 +5,8 @@ import (
 	"log"
 	"sync"
 
-	"github.com/qianxi0410/naive-lru/pb"
-	"github.com/qianxi0410/naive-lru/singleflight"
+	"github.com/qianxi0410/naive-cache/pb"
+	"github.com/qianxi0410/naive-cache/singleflight"
 )
 
 // Getter load data for a key

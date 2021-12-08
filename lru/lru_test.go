@@ -1,9 +1,10 @@
 package lru_test
 
 import (
-	"github.com/qianxi0410/naive-lru/lru"
 	"reflect"
 	"testing"
+
+	"github.com/qianxi0410/naive-cache/lru"
 )
 
 type Value string
@@ -42,7 +43,7 @@ func TestLruOverSize(t *testing.T) {
 	}
 }
 
-func  TestLruOnEvicted(t *testing.T)  {
+func TestLruOnEvicted(t *testing.T) {
 	keys := make([]string, 0)
 	cache := lru.New(int64(10), func(k string, value lru.Value) {
 		keys = append(keys, k)

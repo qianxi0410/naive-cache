@@ -1,4 +1,4 @@
-module github.com/qianxi0410/naive-lru
+module github.com/qianxi0410/naive-cache
 
 go 1.17
 

@@ -10,8 +10,8 @@ import (
 	"sync"
 
 	"github.com/golang/protobuf/proto"
-	"github.com/qianxi0410/naive-lru/consistenthash"
-	"github.com/qianxi0410/naive-lru/pb"
+	"github.com/qianxi0410/naive-cache/consistenthash"
+	"github.com/qianxi0410/naive-cache/pb"
 )
 
 const defaultBasePath = "/_naive/"

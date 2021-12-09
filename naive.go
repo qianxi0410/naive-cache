@@ -119,7 +119,7 @@ func (g *Group) load(key string) (value ByteView, err error) {
 		return g.getLocally(key)
 	})
 
-	if err != nil {
+	if err == nil {
 		return view.(ByteView), nil
 	}
 	return

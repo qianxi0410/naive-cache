@@ -1,2 +1,3 @@
 # naive-cache
-A simple cache written in go
+
+A naive distribution cache written in go

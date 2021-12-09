@@ -24,7 +24,7 @@ type HttpPool struct {
 	basePath    string
 	mu          sync.Mutex
 	peers       *consistenthash.Map
-	httpGetters map[string]*httpGetter
+	httpGetters map[string]PeerGetter
 }
 
 // NewHttpPool is a construct of HttpPool
@@ -86,7 +86,7 @@ func (p *HttpPool) Set(peers ...string) {
 
 	p.peers = consistenthash.New(defaultReplicas, nil)
 	p.peers.Add(peers...)
-	p.httpGetters = make(map[string]*httpGetter, len(peers))
+	p.httpGetters = make(map[string]PeerGetter, len(peers))
 	for _, peer := range peers {
 		p.httpGetters[peer] = &httpGetter{baseUrl: peer + p.basePath}
 	}
@@ -105,6 +105,7 @@ func (p *HttpPool) PickPeer(key string) (PeerGetter, bool) {
 
 var _ PeerPicker = (*HttpPool)(nil)
 
+// httpGetter is a http client
 type httpGetter struct {
 	baseUrl string
 }

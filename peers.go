@@ -8,7 +8,7 @@ type PeerPicker interface {
 	PickPeer(key string) (peer PeerGetter, ok bool)
 }
 
-// PeerGetter is the interface that must be implemented by a peer
+// PeerGetter is the interface that must be implemented by a client
 type PeerGetter interface {
 	Get(in *pb.Request, out *pb.Response) error
 }
